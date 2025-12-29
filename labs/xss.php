@@ -47,48 +47,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>Reflected XSS Lab</h1>
-      <nav><a href="/labs/index.php">Exit Lab</a></nav>
-    </div>
-  </header>
-  <main class="lab-container">
-    <div class="card">
-        <h3>Objective</h3>
-        <p>This guestbook reflects your input directly without sanitization. Try to inject JavaScript to pop up an alert box.</p>
-        <p><em>Hint: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code></em></p>
-    </div>
-
-    <form method="POST" class="card" style="margin-top: 1rem;">
-        <label>
-            <span>Leave a comment:</span>
-            <input type="text" name="comment" placeholder="Hello world!" autocomplete="off">
-        </label>
-        <button type="submit" class="btn">Post Comment</button>
-    </form>
-
-    <?php if ($message): ?>
-        <div class="alert alert-success" style="margin-top: 1rem;">
-            <?= sanitize($message) ?>
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>Reflected XSS Lab</h1>
+      </header>
+      <div class="lab-container" style="padding: 0; margin: 0;">
+        <div class="card">
+            <h3>Objective</h3>
+            <p>This guestbook reflects your input directly without sanitization. Try to inject JavaScript to pop up an alert box.</p>
+            <p><em>Hint: <code>&lt;script&gt;alert(1)&lt;/script&gt;</code></em></p>
         </div>
-    <?php endif; ?>
 
-    <?php if ($comment): ?>
-        <h3>Latest Comments:</h3>
-        <div class="guestbook">
-            <!-- VULNERABILITY: Outputting raw HTML (Simulation) -->
-            <?php 
-                if ($completed) {
-                    echo "<strong>User says:</strong> " . htmlspecialchars($comment) . " <br><br><em>(In a real vulnerable app, this would have executed!)</em>";
-                    // Actually execute it for effect? No, let's keep it safe but visual.
-                    echo "<script>alert('XSS Successful! (Simulated)');</script>";
-                } else {
-                    echo "<strong>User says:</strong> " . htmlspecialchars($comment);
-                }
-            ?>
-        </div>
-    <?php endif; ?>
-  </main>
+        <form method="POST" class="card" style="margin-top: 1rem;">
+            <label>
+                <span>Leave a comment:</span>
+                <input type="text" name="comment" placeholder="Hello world!" autocomplete="off">
+            </label>
+            <button type="submit" class="btn">Post Comment</button>
+        </form>
+
+        <?php if ($message): ?>
+            <div class="alert alert-success" style="margin-top: 1rem;">
+                <?= sanitize($message) ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($comment): ?>
+            <h3>Latest Comments:</h3>
+            <div class="guestbook">
+                <!-- VULNERABILITY: Outputting raw HTML (Simulation) -->
+                <?php 
+                    if ($completed) {
+                        echo "<strong>User says:</strong> " . htmlspecialchars($comment) . " <br><br><em>(In a real vulnerable app, this would have executed!)</em>";
+                        // Actually execute it for effect? No, let's keep it safe but visual.
+                        echo "<script>alert('XSS Successful! (Simulated)');</script>";
+                    } else {
+                        echo "<strong>User says:</strong> " . htmlspecialchars($comment);
+                    }
+                ?>
+            </div>
+        <?php endif; ?>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

@@ -57,60 +57,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>Phishing Lab</h1>
-      <nav><a href="/labs/index.php">Exit Lab</a></nav>
-    </div>
-  </header>
-  <main class="lab-container">
-    <?php if ($message): ?>
-        <div class="<?= $completed ? 'success' : 'error' ?>">
-            <?= $message ?>
-            <?php if ($completed): ?>
-                <br><a href="/profile.php" class="btn btn-secondary">View Profile</a>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!$completed): ?>
-        <h2>Scenario: Analyze the Suspicious Email</h2>
-        <div class="fake-email">
-            <div class="fake-header">
-                <strong>From:</strong> support@faceboook-security-alert.com <span style="color:red">(Look closely!)</span><br>
-                <strong>Subject:</strong> URGENT: Your account will be deleted in 24 hours!!
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>Phishing Lab</h1>
+      </header>
+      <div class="lab-container" style="padding: 0; margin: 0;">
+        <?php if ($message): ?>
+            <div class="<?= $completed ? 'success' : 'error' ?>">
+                <?= $message ?>
+                <?php if ($completed): ?>
+                    <br><a href="/profile.php" class="btn btn-secondary">View Profile</a>
+                <?php endif; ?>
             </div>
-            <div class="fake-body">
-                <p>Dear User,</p>
-                <p>We have detected suspicious activity. Please verify your identity immediately or your account will be permanently closed.</p>
-                <p><a href="#" style="color:blue; text-decoration:underline;">http://verify-facebook-login.com.evil-site.net/login</a></p>
-                <p>Thanks,<br>Security Team</p>
-            </div>
-        </div>
+        <?php endif; ?>
 
-        <form method="POST">
-            <div class="question">
-                <p><strong>1. What is the most obvious indicator in the "From" address?</strong></p>
-                <label><input type="radio" name="q1" value="valid"> It looks valid.</label><br>
-                <label><input type="radio" name="q1" value="url"> Misspelled domain (faceboook) or unofficial domain.</label><br>
-                <label><input type="radio" name="q1" value="none"> Nothing is wrong.</label>
+        <?php if (!$completed): ?>
+            <h2>Scenario: Analyze the Suspicious Email</h2>
+            <div class="fake-email">
+                <div class="fake-header">
+                    <strong>From:</strong> support@faceboook-security-alert.com <span style="color:red">(Look closely!)</span><br>
+                    <strong>Subject:</strong> URGENT: Your account will be deleted in 24 hours!!
+                </div>
+                <div class="fake-body">
+                    <p>Dear User,</p>
+                    <p>We have detected suspicious activity. Please verify your identity immediately or your account will be permanently closed.</p>
+                    <p><a href="#" style="color:blue; text-decoration:underline;">http://verify-facebook-login.com.evil-site.net/login</a></p>
+                    <p>Thanks,<br>Security Team</p>
+                </div>
             </div>
 
-            <div class="question">
-                <p><strong>2. Inspect the link. What is suspicious?</strong></p>
-                <label><input type="radio" name="q2" value="https"> It uses HTTP instead of HTTPS and redirects to a different domain.</label><br>
-                <label><input type="radio" name="q2" value="ok"> It says "facebook" so it is safe.</label>
-            </div>
+            <form method="POST">
+                <div class="question">
+                    <p><strong>1. What is the most obvious indicator in the "From" address?</strong></p>
+                    <label><input type="radio" name="q1" value="valid"> It looks valid.</label><br>
+                    <label><input type="radio" name="q1" value="url"> Misspelled domain (faceboook) or unofficial domain.</label><br>
+                    <label><input type="radio" name="q1" value="none"> Nothing is wrong.</label>
+                </div>
 
-            <div class="question">
-                <p><strong>3. What psychological trigger is used?</strong></p>
-                <label><input type="radio" name="q3" value="greed"> Greed (you won money).</label><br>
-                <label><input type="radio" name="q3" value="urgent"> Urgency/Fear (account deletion).</label>
-            </div>
+                <div class="question">
+                    <p><strong>2. Inspect the link. What is suspicious?</strong></p>
+                    <label><input type="radio" name="q2" value="https"> It uses HTTP instead of HTTPS and redirects to a different domain.</label><br>
+                    <label><input type="radio" name="q2" value="ok"> It says "facebook" so it is safe.</label>
+                </div>
 
-            <button type="submit" class="btn">Submit Analysis</button>
-        </form>
-    <?php endif; ?>
-  </main>
+                <div class="question">
+                    <p><strong>3. What psychological trigger is used?</strong></p>
+                    <label><input type="radio" name="q3" value="greed"> Greed (you won money).</label><br>
+                    <label><input type="radio" name="q3" value="urgent"> Urgency/Fear (account deletion).</label>
+                </div>
+
+                <button type="submit" class="btn">Submit Analysis</button>
+            </form>
+        <?php endif; ?>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

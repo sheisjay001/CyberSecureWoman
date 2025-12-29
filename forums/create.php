@@ -48,34 +48,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>New Discussion</h1>
-      <nav>
-        <a href="/forums/index.php">Back to Forum</a>
-      </nav>
-    </div>
-  </header>
-  <main class="container">
-    <div class="card" style="max-width: 800px; margin: 0 auto;">
-        <?php if ($error): ?>
-            <div style="background:#fee; color:#c00; padding:1rem; border-radius:4px; margin-bottom:1rem;">
-                <?= sanitize($error) ?>
-            </div>
-        <?php endif; ?>
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>New Discussion</h1>
+      </header>
+      <div class="card" style="max-width: 800px; margin: 0 auto;">
+          <?php if ($error): ?>
+              <div style="background:#fee; color:#c00; padding:1rem; border-radius:4px; margin-bottom:1rem;">
+                  <?= sanitize($error) ?>
+              </div>
+          <?php endif; ?>
 
-        <form method="POST" action="">
-            <div class="form-group">
-                <label for="title">Topic Title</label>
-                <input type="text" id="title" name="title" required placeholder="e.g., How do I get started with CTFs?">
-            </div>
-            <div class="form-group">
-                <label for="content">Message</label>
-                <textarea id="content" name="content" rows="10" required placeholder="Write your post here..."></textarea>
-            </div>
-            <button type="submit" class="btn">Post Thread</button>
-        </form>
-    </div>
-  </main>
+          <form method="POST" action="">
+              <div class="form-group">
+                  <label for="title">Topic Title</label>
+                  <input type="text" id="title" name="title" required placeholder="e.g., How do I get started with CTFs?">
+              </div>
+              <div class="form-group">
+                  <label for="content">Message</label>
+                  <textarea id="content" name="content" rows="10" required placeholder="Write your post here..."></textarea>
+              </div>
+              <button type="submit" class="btn">Post Thread</button>
+          </form>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

@@ -27,49 +27,46 @@ $result = $conn->query($sql);
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>Community Forum</h1>
-      <nav>
-        <a href="/index.php">Home</a>
-        <a href="/dashboard.php">Dashboard</a>
-      </nav>
-    </div>
-  </header>
-  <main class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>Discussions</h2>
-        <a href="/forums/create.php" class="btn">Start New Thread</a>
-    </div>
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>Community Forum</h1>
+      </header>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>Discussions</h2>
+          <a href="/forums/create.php" class="btn">Start New Thread</a>
+      </div>
 
-    <table class="forum-list">
-      <thead>
-        <tr>
-          <th>Topic</th>
-          <th>Replies</th>
-          <th>Last Activity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($result && $result->num_rows > 0): ?>
-          <?php while ($row = $result->fetch_assoc()): ?>
-            <tr>
-              <td>
-                <a href="/forums/view.php?id=<?= $row['id'] ?>" class="thread-title"><?= sanitize($row['title']) ?></a>
-                <div class="thread-meta">By <?= sanitize($row['author_name']) ?></div>
-              </td>
-              <td><?= $row['reply_count'] ?></td>
-              <td><?= date('M j, Y', strtotime($row['created_at'])) ?></td>
-            </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
+      <table class="forum-list">
+        <thead>
           <tr>
-            <td colspan="3" style="text-align: center; padding: 2rem;">No discussions yet. Be the first to start one!</td>
+            <th>Topic</th>
+            <th>Replies</th>
+            <th>Last Activity</th>
           </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </main>
+        </thead>
+        <tbody>
+          <?php if ($result && $result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+              <tr>
+                <td>
+                  <a href="/forums/view.php?id=<?= $row['id'] ?>" class="thread-title"><?= sanitize($row['title']) ?></a>
+                  <div class="thread-meta">By <?= sanitize($row['author_name']) ?></div>
+                </td>
+                <td><?= $row['reply_count'] ?></td>
+                <td><?= date('M j, Y', strtotime($row['created_at'])) ?></td>
+              </tr>
+            <?php endwhile; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="3" style="text-align: center; padding: 2rem;">No discussions yet. Be the first to start one!</td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </main>
+  </div>
 </body>
 </html>
 

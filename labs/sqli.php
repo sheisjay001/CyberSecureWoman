@@ -65,41 +65,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>SQL Injection Lab</h1>
-      <nav><a href="/labs/index.php">Exit Lab</a></nav>
-    </div>
-  </header>
-  <main class="lab-container">
-    <div class="card">
-        <h3>Objective</h3>
-        <p>This search box is vulnerable to SQL Injection. Try to dump all users from the database.</p>
-        <p><em>Hint: The query looks like: <code>SELECT * FROM users WHERE id = '$input'</code></em></p>
-        <p><em>Try to make the WHERE clause always true.</em></p>
-    </div>
-
-    <form method="POST" class="card" style="margin-top: 1rem;">
-        <label>
-            <span>User ID:</span>
-            <input type="text" name="userid" placeholder="e.g., 1" autocomplete="off">
-        </label>
-        <button type="submit" class="btn">Search</button>
-    </form>
-
-    <?php if ($message): ?>
-        <div class="alert <?= $completed ? 'alert-success' : 'alert-error' ?>" style="margin-top: 1rem;">
-            <?= sanitize($message) ?>
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>SQL Injection Lab</h1>
+      </header>
+      <div class="lab-container" style="padding: 0; margin: 0;">
+        <div class="card">
+            <h3>Objective</h3>
+            <p>This search box is vulnerable to SQL Injection. Try to dump all users from the database.</p>
+            <p><em>Hint: The query looks like: <code>SELECT * FROM users WHERE id = '$input'</code></em></p>
+            <p><em>Try to make the WHERE clause always true.</em></p>
         </div>
-    <?php endif; ?>
 
-    <?php if (!empty($output)): ?>
-        <div class="terminal">
-            <?php foreach ($output as $row): ?>
-                ID: <?= $row['id'] ?> | User: <?= $row['username'] ?> | Email: <?= $row['email'] ?> | Pass: <?= $row['password'] ?><br>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-  </main>
+        <form method="POST" class="card" style="margin-top: 1rem;">
+            <label>
+                <span>User ID:</span>
+                <input type="text" name="userid" placeholder="e.g., 1" autocomplete="off">
+            </label>
+            <button type="submit" class="btn">Search</button>
+        </form>
+
+        <?php if ($message): ?>
+            <div class="alert <?= $completed ? 'alert-success' : 'alert-error' ?>" style="margin-top: 1rem;">
+                <?= sanitize($message) ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($output)): ?>
+            <div class="terminal">
+                <?php foreach ($output as $row): ?>
+                    ID: <?= $row['id'] ?> | User: <?= $row['username'] ?> | Email: <?= $row['email'] ?> | Pass: <?= $row['password'] ?><br>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

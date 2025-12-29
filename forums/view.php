@@ -52,39 +52,36 @@ $posts = $stmt->get_result();
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1>Forum</h1>
-      <nav>
-        <a href="/forums/index.php">Back to List</a>
-        <a href="/dashboard.php">Dashboard</a>
-      </nav>
-    </div>
-  </header>
-  <main class="container">
-    <h2><?= sanitize($thread['title']) ?></h2>
-    
-    <?php while ($post = $posts->fetch_assoc()): ?>
-        <div class="post">
-            <div class="post-meta">
-                <span class="post-author"><?= sanitize($post['author_name']) ?></span> 
-                • <?= date('M j, Y g:i a', strtotime($post['created_at'])) ?>
-            </div>
-            <div class="post-content">
-                <?= nl2br(sanitize($post['content'])) ?>
-            </div>
-        </div>
-    <?php endwhile; ?>
+  <div class="layout-wrapper">
+    <?php include __DIR__ . '/../includes/sidebar.php'; ?>
+    <main class="main-content">
+      <header style="margin-bottom: 20px;">
+        <h1>Forum</h1>
+      </header>
+      <h2><?= sanitize($thread['title']) ?></h2>
+      
+      <?php while ($post = $posts->fetch_assoc()): ?>
+          <div class="post">
+              <div class="post-meta">
+                  <span class="post-author"><?= sanitize($post['author_name']) ?></span> 
+                  • <?= date('M j, Y g:i a', strtotime($post['created_at'])) ?>
+              </div>
+              <div class="post-content">
+                  <?= nl2br(sanitize($post['content'])) ?>
+              </div>
+          </div>
+      <?php endwhile; ?>
 
-    <div class="reply-box">
-        <h3>Post a Reply</h3>
-        <form method="POST" action="">
-            <div class="form-group">
-                <textarea name="reply_content" rows="5" required placeholder="Type your reply here..." style="width: 100%; padding: 0.5rem;"></textarea>
-            </div>
-            <button type="submit" class="btn">Submit Reply</button>
-        </form>
-    </div>
-  </main>
+      <div class="reply-box">
+          <h3>Post a Reply</h3>
+          <form method="POST" action="">
+              <div class="form-group">
+                  <textarea name="reply_content" rows="5" required placeholder="Type your reply here..." style="width: 100%; padding: 0.5rem;"></textarea>
+              </div>
+              <button type="submit" class="btn">Submit Reply</button>
+          </form>
+      </div>
+    </main>
+  </div>
 </body>
 </html>
