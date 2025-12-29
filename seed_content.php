@@ -38,10 +38,10 @@ $new_content = [
     [
         'title' => 'OWASP Top 10',
         'description' => 'Learn about the 10 most critical web application security risks.',
-        'type' => 'article',
+        'type' => 'video',
         'content_body' => '<h3>The Standard for Web Security</h3><p>The OWASP Top 10 is a standard awareness document for developers and web application security. It represents a broad consensus about the most critical security risks to web applications.</p><ul><li>A01:2021-Broken Access Control</li><li>A02:2021-Cryptographic Failures</li><li>A03:2021-Injection</li></ul><p><a href="https://owasp.org/www-project-top-ten/" target="_blank">Read Full Documentation</a></p>',
-        'content_url' => '',
-        'thumbnail_url' => 'https://placehold.co/600x400?text=OWASP+Top+10'
+        'content_url' => 'https://www.youtube.com/embed/Zc5N3C51G6A',
+        'thumbnail_url' => 'https://img.youtube.com/vi/Zc5N3C51G6A/maxresdefault.jpg'
     ],
     [
         'title' => 'Lab: SQL Injection',
@@ -81,8 +81,7 @@ echo "Seeding courses and labs...\n";
 $stmt = $conn->prepare("INSERT INTO courses (title, description, type, content_body, content_url, thumbnail_url, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE content_url=VALUES(content_url), thumbnail_url=VALUES(thumbnail_url)");
 
 foreach ($new_content as $c) {
-    // Check if exists first to avoid duplicate key errors if title isn't unique index (it usually isn't)
-    // But for simplicity, we'll check by title
+    // Check if exists
     $check = $conn->query("SELECT id FROM courses WHERE title = '" . $conn->real_escape_string($c['title']) . "'");
     if ($check->num_rows == 0) {
         $stmt->bind_param("ssssss", $c['title'], $c['description'], $c['type'], $c['content_body'], $c['content_url'], $c['thumbnail_url']);
@@ -92,7 +91,15 @@ foreach ($new_content as $c) {
             echo "Error inserting " . $c['title'] . ": " . $stmt->error . "\n";
         }
     } else {
-        echo "Skipped (Exists): " . $c['title'] . "\n";
+        // Update existing record
+        $id = $check->fetch_assoc()['id'];
+        $update = $conn->prepare("UPDATE courses SET description=?, type=?, content_body=?, content_url=?, thumbnail_url=? WHERE id=?");
+        $update->bind_param("sssssi", $c['description'], $c['type'], $c['content_body'], $c['content_url'], $c['thumbnail_url'], $id);
+        if ($update->execute()) {
+            echo "Updated: " . $c['title'] . "\n";
+        } else {
+            echo "Error updating " . $c['title'] . ": " . $update->error . "\n";
+        }
     }
 }
 
