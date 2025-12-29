@@ -1,0 +1,81 @@
+<?php
+session_start();
+require_once __DIR__ . '/../includes/functions.php';
+require_login();
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = trim($_POST['title'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+
+    if (empty($title) || empty($content)) {
+        $error = 'Please fill in both title and content.';
+    } else {
+        $conn = db();
+        // Start transaction
+        $conn->begin_transaction();
+        try {
+            // Insert Thread
+            $stmt = $conn->prepare("INSERT INTO forum_threads (user_id, title, created_at) VALUES (?, ?, NOW())");
+            $userId = $_SESSION['user_id'];
+            $stmt->bind_param("is", $userId, $title);
+            $stmt->execute();
+            $threadId = $conn->insert_id;
+
+            // Insert First Post
+            $stmt = $conn->prepare("INSERT INTO forum_posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt->bind_param("iis", $threadId, $userId, $content);
+            $stmt->execute();
+
+            $conn->commit();
+            header("Location: /forums/view.php?id=$threadId");
+            exit;
+        } catch (Exception $e) {
+            $conn->rollback();
+            $error = 'Failed to create thread. Please try again.';
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Thread - CyberSecure Women</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>New Discussion</h1>
+      <nav>
+        <a href="/forums/index.php">Back to Forum</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <?php if ($error): ?>
+            <div style="background:#fee; color:#c00; padding:1rem; border-radius:4px; margin-bottom:1rem;">
+                <?= sanitize($error) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="title">Topic Title</label>
+                <input type="text" id="title" name="title" required placeholder="e.g., How do I get started with CTFs?">
+            </div>
+            <div class="form-group">
+                <label for="content">Message</label>
+                <textarea id="content" name="content" rows="10" required placeholder="Write your post here..."></textarea>
+            </div>
+            <button type="submit" class="btn">Post Thread</button>
+        </form>
+    </div>
+  </main>
+</body>
+</html>

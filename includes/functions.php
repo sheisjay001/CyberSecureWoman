@@ -1,0 +1,123 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+function db() {
+  static $conn = null;
+  if ($conn) return $conn;
+  
+  // Enable exception reporting for mysqli
+  mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+  $host = env('DB_HOST', '127.0.0.1');
+  $user = env('DB_USER', 'root');
+  $pass = env('DB_PASS', '');
+  $name = env('DB_NAME', 'cybersecure_women');
+  $port = (int) env('DB_PORT', '3306');
+  $ssl_ca = env('DB_SSL_CA', null);
+
+  try {
+      $conn = mysqli_init();
+      if ($ssl_ca) {
+          $conn->ssl_set(NULL, NULL, $ssl_ca, NULL, NULL);
+      }
+      $conn->real_connect($host, $user, $pass, $name, $port, NULL, MYSQLI_CLIENT_SSL);
+      $conn->set_charset('utf8mb4');
+      return $conn;
+  } catch (mysqli_sql_exception $e) {
+      // 1049 is "Unknown database"
+      if ($e->getCode() === 1049) {
+          http_response_code(500);
+          exit("<h1>Database Not Found</h1><p>Please run <code>php setup_data.php</code> to create the database.</p>");
+      }
+      http_response_code(500);
+      exit('Database connection error: ' . $e->getMessage());
+  }
+}
+
+function is_logged_in() {
+  return isset($_SESSION['user_id']);
+}
+
+function require_login() {
+  if (!is_logged_in()) {
+    header('Location: /auth/login.php');
+    exit;
+  }
+}
+
+function sanitize($s) {
+  return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+function find_user_by_email($email) {
+  $stmt = db()->prepare('SELECT id, name, email, password_hash, gender FROM users WHERE email = ? LIMIT 1');
+  $stmt->bind_param('s', $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  return $result->fetch_assoc();
+}
+
+function create_user($name, $email, $password, $gender) {
+  $hash = password_hash($password, PASSWORD_DEFAULT);
+  $stmt = db()->prepare('INSERT INTO users (name, email, password_hash, gender, created_at) VALUES (?, ?, ?, ?, NOW())');
+  $stmt->bind_param('ssss', $name, $email, $hash, $gender);
+  return $stmt->execute();
+}
+
+function authenticate($email, $password) {
+  $user = find_user_by_email($email);
+  if (!$user) return false;
+  if (!password_verify($password, $user['password_hash'])) return false;
+  $_SESSION['user_id'] = (int) $user['id'];
+  $_SESSION['user_name'] = $user['name'];
+  $_SESSION['user_gender'] = $user['gender'];
+  return true;
+}
+
+function logout() {
+  $_SESSION = [];
+  if (ini_get('session.use_cookies')) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+  }
+  session_destroy();
+}
+
+function award_badge($user_id, $badge_name) {
+    $conn = db();
+    // Get badge ID
+    $stmt = $conn->prepare("SELECT id FROM badges WHERE name = ?");
+    $stmt->bind_param("s", $badge_name);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($res->num_rows === 0) return false;
+    $badge = $res->fetch_assoc();
+    $badge_id = $badge['id'];
+
+    // Check if already awarded
+    $stmt = $conn->prepare("SELECT 1 FROM user_badges WHERE user_id = ? AND badge_id = ?");
+    $stmt->bind_param("ii", $user_id, $badge_id);
+    $stmt->execute();
+    if ($stmt->get_result()->num_rows > 0) return false;
+
+    // Award
+    $stmt = $conn->prepare("INSERT INTO user_badges (user_id, badge_id, awarded_at) VALUES (?, ?, NOW())");
+    $stmt->bind_param("ii", $user_id, $badge_id);
+    return $stmt->execute();
+}
+
+function get_user_badges($user_id) {
+    $conn = db();
+    $stmt = $conn->prepare("SELECT b.*, ub.awarded_at FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function get_user_progress($user_id) {
+    $conn = db();
+    $stmt = $conn->prepare("SELECT c.title, c.type, p.completed, p.score FROM courses c JOIN progress p ON c.id = p.course_id WHERE p.user_id = ? ORDER BY p.updated_at DESC");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    return $stmt->get_result();
+}
