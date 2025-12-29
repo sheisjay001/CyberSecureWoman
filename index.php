@@ -18,6 +18,9 @@ switch ($request_uri) {
     case '/auth/register.php':
         require __DIR__ . '/auth/register.php';
         break;
+    case '/auth/forgot-password.php':
+        require __DIR__ . '/auth/forgot-password.php';
+        break;
     case '/auth/logout.php':
         require __DIR__ . '/auth/logout.php';
         break;
