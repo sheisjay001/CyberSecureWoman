@@ -4,7 +4,7 @@ $request_uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
 switch ($request_uri) {
     case '/':
     case '/index.php':
-        require __DIR__ . '/dashboard.php';
+        require __DIR__ . '/home.php';
         break;
     case '/dashboard.php':
         require __DIR__ . '/dashboard.php';
