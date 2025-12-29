@@ -1,5 +1,15 @@
 <?php
-require_once __DIR__ . '/config.php';
+if (file_exists(__DIR__ . '/config.php')) {
+    require_once __DIR__ . '/config.php';
+}
+
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        $v = getenv($key);
+        if ($v === false || $v === '') return $default;
+        return $v;
+    }
+}
 
 function db() {
   static $conn = null;
@@ -14,6 +24,14 @@ function db() {
   $name = env('DB_NAME', 'cybersecure_women');
   $port = (int) env('DB_PORT', '3306');
   $ssl_ca = env('DB_SSL_CA', null);
+
+  // Auto-detect SSL CA if not explicitly set but file exists in root
+  if (empty($ssl_ca) && file_exists(__DIR__ . '/../isrgrootx1.pem')) {
+      $ssl_ca = __DIR__ . '/../isrgrootx1.pem';
+  } elseif (!empty($ssl_ca) && !file_exists($ssl_ca) && file_exists(__DIR__ . '/../' . $ssl_ca)) {
+      // Handle relative path case from env var
+      $ssl_ca = __DIR__ . '/../' . $ssl_ca;
+  }
 
   try {
       $conn = mysqli_init();
