@@ -124,6 +124,70 @@ function award_badge($user_id, $badge_name) {
     return $stmt->execute();
 }
 
+function send_email($to, $subject, $message) {
+    // Basic mail function wrapper.
+    // NOTE: For this to work on localhost (XAMPP), you must configure sendmail in php.ini and sendmail.ini
+    // or use a tool like Mailhog/Papercut.
+    
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= 'From: CyberSecure Women <no-reply@cybersecurewomen.local>' . "\r\n";
+    
+    // In a production environment, use PHPMailer or similar.
+    return mail($to, $subject, $message, $headers);
+}
+
+function create_password_reset_token($email) {
+    $token = bin2hex(random_bytes(32));
+    $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+    
+    $conn = db();
+    // Invalidate old tokens
+    $stmt = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    
+    // Create new token
+    $stmt = $conn->prepare("INSERT INTO password_resets (email, token, expires_at, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt->bind_param("sss", $email, $token, $expires);
+    
+    if ($stmt->execute()) {
+        return $token;
+    }
+    return false;
+}
+
+function verify_reset_token($token) {
+    $conn = db();
+    $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ? AND expires_at > NOW()");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_assoc()) {
+        return $row['email'];
+    }
+    return false;
+}
+
+function reset_password($email, $new_password) {
+    $conn = db();
+    $hash = password_hash($new_password, PASSWORD_DEFAULT);
+    
+    // Update user password
+    $stmt = $conn->prepare("UPDATE users SET password_hash = ? WHERE email = ?");
+    $stmt->bind_param("ss", $hash, $email);
+    
+    if ($stmt->execute()) {
+        // Delete used token
+        $stmt = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return true;
+    }
+    return false;
+}
+
 function get_user_badges($user_id) {
     $conn = db();
     $stmt = $conn->prepare("SELECT b.*, ub.awarded_at FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");

@@ -18,11 +18,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = find_user_by_email($email);
         
         if ($user) {
-            // In a real application, we would generate a token, save it to DB, and email it.
-            // For this local setup, we'll simulate the process.
-            $success = 'Password reset link has been sent to your email.';
+            $token = create_password_reset_token($email);
+            if ($token) {
+                // Construct reset link
+                $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+                $host = $_SERVER['HTTP_HOST'];
+                $link = $protocol . $host . "/auth/reset-password.php?token=" . $token;
+                
+                $message = "
+                <html>
+                <head>
+                    <title>Password Reset</title>
+                </head>
+                <body>
+                    <p>Hello " . sanitize($user['name']) . ",</p>
+                    <p>We received a request to reset your password.</p>
+                    <p>Click the link below to reset it:</p>
+                    <p><a href='" . $link . "'>" . $link . "</a></p>
+                    <p>This link expires in 1 hour.</p>
+                    <p>If you did not request this, please ignore this email.</p>
+                </body>
+                </html>
+                ";
+                
+                if (send_email($email, "Reset Your Password - CyberSecure Women", $message)) {
+                     $success = 'Password reset link has been sent to your email. Please check your inbox (and spam folder).';
+                } else {
+                     $error = 'Failed to send email. Please ensure your mail server is configured.';
+                     // For local dev, maybe show link? No, that's insecure even for dev unless explicitly asked.
+                     // But user said "let users receive reset link in their mail box", so we try to send.
+                }
+            } else {
+                $error = 'Could not generate reset token. Please try again.';
+            }
         } else {
-            // Generic message to prevent user enumeration, or specific if desired for this dev phase
+            // Generic message
             $success = 'If an account exists with this email, you will receive a reset link.';
         }
     }
