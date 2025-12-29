@@ -43,74 +43,6 @@ input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #2b2f54;
   transition: all 0.3s ease;
 }
 
-/* Mobile Responsive Tweaks */
-@media (max-width: 768px) {
-  .header .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .header nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 16px;
-  }
-  .header nav a {
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #232647;
-    flex-grow: 1;
-    text-align: center;
-  }
-  .hero {
-    text-align: center;
-  }
-  .cta {
-    flex-direction: column;
-  }
-  .btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 8px;
-    padding: 12px;
-  }
-  .cards {
-    grid-template-columns: 1fr; /* Force single column on small screens */
-  }
-  
-  /* Sidebar Mobile */
-  .layout-wrapper {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    min-height: auto;
-    border-right: none;
-    border-bottom: 1px solid #232647;
-  }
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .sidebar-toggle {
-    display: flex;
-  }
-  .sidebar-nav {
-    display: none;
-    width: 100%;
-    padding-top: 0;
-  }
-  .sidebar-nav.active {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 20px;
-  }
-}
-
 /* Sidebar Layout */
 .layout-wrapper {
   display: flex;
@@ -236,3 +168,70 @@ input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #2b2f54;
   font-weight: 600;
 }
 
+/* Mobile Responsive Tweaks - MOVED TO BOTTOM FOR OVERRIDE */
+@media (max-width: 768px) {
+  .header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .header nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .header nav a {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #232647;
+    flex-grow: 1;
+    text-align: center;
+  }
+  .hero {
+    text-align: center;
+  }
+  .cta {
+    flex-direction: column;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+    padding: 12px;
+  }
+  .cards {
+    grid-template-columns: 1fr; /* Force single column on small screens */
+  }
+  
+  /* Sidebar Mobile */
+  .layout-wrapper {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #232647;
+  }
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sidebar-toggle {
+    display: flex;
+  }
+  .sidebar-nav {
+    display: none;
+    width: 100%;
+    padding-top: 0;
+  }
+  .sidebar-nav.active {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+}
