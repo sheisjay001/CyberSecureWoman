@@ -49,16 +49,16 @@ $new_content = [
         'description' => 'Master the Linux command line, essential for any cybersecurity career.',
         'type' => 'video',
         'content_body' => 'Comprehensive series covering Linux basics, file permissions, bash scripting, and networking.',
-        'content_url' => 'https://www.youtube.com/embed/wBp0Rb-ZJak', // NetworkChuck
-        'thumbnail_url' => 'https://img.youtube.com/vi/wBp0Rb-ZJak/maxresdefault.jpg'
+        'content_url' => 'https://www.youtube.com/embed/lZAoFs75_cs',
+        'thumbnail_url' => 'https://img.youtube.com/vi/lZAoFs75_cs/maxresdefault.jpg'
     ],
     [
         'title' => 'Networking Fundamentals',
         'description' => 'Understand IP addresses, subnets, DNS, and the OSI model.',
         'type' => 'video',
         'content_body' => 'A visual guide to how the internet works.',
-        'content_url' => 'https://www.youtube.com/embed/3b_T9FBCX9w', // PowerCert
-        'thumbnail_url' => 'https://img.youtube.com/vi/3b_T9FBCX9w/maxresdefault.jpg'
+        'content_url' => 'https://www.youtube.com/embed/cNwEVYkx2Kk',
+        'thumbnail_url' => 'https://img.youtube.com/vi/cNwEVYkx2Kk/maxresdefault.jpg'
     ],
     [
         'title' => 'OWASP Top 10',
@@ -129,4 +129,20 @@ foreach ($new_content as $c) {
     }
 }
 
+echo "Backfilling video thumbnails...\n";
+$result = $conn->query("SELECT id, content_url FROM courses WHERE type='video' AND (thumbnail_url IS NULL OR thumbnail_url='')");
+while ($row = $result->fetch_assoc()) {
+    $url = $row['content_url'];
+    $thumb = '';
+    if (preg_match('/https?:\/\/www\.youtube\.com\/embed\/([A-Za-z0-9_-]+)/', $url, $m)) {
+        $vid = $m[1];
+        $thumb = 'https://img.youtube.com/vi/' . $vid . '/maxresdefault.jpg';
+    } else {
+        $thumb = 'https://placehold.co/600x400?text=Video';
+    }
+    $stmt2 = $conn->prepare("UPDATE courses SET thumbnail_url=? WHERE id=?");
+    $stmt2->bind_param('si', $thumb, $row['id']);
+    $stmt2->execute();
+    echo "Thumbnail set for ID: " . $row['id'] . "\n";
+}
 echo "Done!\n";
