@@ -46,13 +46,24 @@ switch ($request_uri) {
         require __DIR__ . '/forums/view.php';
         break;
     default:
-        // Serve static assets or 404
-        if (file_exists(__DIR__ . $request_uri) && !is_dir(__DIR__ . $request_uri)) {
-             // Let the server handle static files (handled by vercel.json routes usually, but for PHP router)
-             // In Vercel, static files are served before this router if matched.
-             // If we are here, it's likely a 404 or a dynamic route miss.
-             http_response_code(404);
-             echo "404 Not Found";
+        // Serve static assets if they exist (Fallback for Vercel/Local)
+        $file_path = __DIR__ . $request_uri;
+        if (file_exists($file_path) && !is_dir($file_path)) {
+            $ext = pathinfo($file_path, PATHINFO_EXTENSION);
+            $mimes = [
+                'css' => 'text/css',
+                'js'  => 'application/javascript',
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg',
+                'jpeg'=> 'image/jpeg',
+                'gif' => 'image/gif',
+                'svg' => 'image/svg+xml',
+                'ico' => 'image/x-icon'
+            ];
+            $mime = $mimes[$ext] ?? 'text/plain';
+            header("Content-Type: $mime");
+            readfile($file_path);
+            exit;
         } else {
             http_response_code(404);
             echo "404 Not Found";
