@@ -57,8 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lab: SQL Injection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Injection Lab - CyberSecure Women</title>
+  <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .lab-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
     .terminal { background: #000; color: #0f0; padding: 1rem; border-radius: 4px; font-family: monospace; margin-top: 1rem; }

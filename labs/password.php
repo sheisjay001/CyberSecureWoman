@@ -30,8 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cracked'])) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lab: Password Strength</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Cracking Lab - CyberSecure Women</title>
+  <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .lab-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
     .cracker-box { background: #333; color: #0f0; padding: 2rem; border-radius: 8px; font-family: monospace; margin-bottom: 2rem; }
