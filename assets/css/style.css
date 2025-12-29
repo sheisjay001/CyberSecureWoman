@@ -16,12 +16,32 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 .feature{background:var(--card);padding:16px;border-radius:12px;border:1px solid #232647}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .card{background:var(--card);padding:16px;border-radius:12px;border:1px solid #232647}
-form.card{display:grid;gap:12px;max-width:420px}
+form.card{display:grid;gap:12px;max-width:420px;margin:40px auto}
 label span{display:block;margin-bottom:6px;color:var(--muted)}
 input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #2b2f54;background:#0d1020;color:var(--text)}
 .alert{padding:10px 12px;border-radius:8px;margin-bottom:12px}
 .alert-error{background:#301b1b;color:#ffd6d6;border:1px solid var(--error)}
 .alert-success{background:#1c2e23;color:#daf5e4;border:1px solid var(--success)}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
 
 /* Mobile Responsive Tweaks */
 @media (max-width: 768px) {
@@ -70,6 +90,23 @@ input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #2b2f54;
     min-height: auto;
     border-right: none;
     border-bottom: 1px solid #232647;
+  }
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sidebar-toggle {
+    display: flex;
+  }
+  .sidebar-nav {
+    display: none;
+    width: 100%;
+    padding-top: 0;
+  }
+  .sidebar-nav.active {
+    display: flex;
+    padding-bottom: 20px;
   }
 }
 
