@@ -22,15 +22,6 @@ $progress = get_user_progress($user_id);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Profile - CyberSecure Women</title>
   <link rel="stylesheet" href="/assets/css/style.css">
-  <style>
-    .profile-header { background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .badge-card { background: #f9f9f9; padding: 1rem; border-radius: 8px; text-align: center; border: 1px solid #eee; }
-    .badge-card img { width: 50px; height: 50px; margin-bottom: 0.5rem; border-radius: 50%; }
-    .badge-name { font-size: 0.8rem; font-weight: bold; }
-    .progress-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    .progress-table th, .progress-table td { padding: 0.75rem; border-bottom: 1px solid #eee; text-align: left; }
-  </style>
 </head>
 <body>
   <div class="layout-wrapper">
@@ -41,7 +32,7 @@ $progress = get_user_progress($user_id);
         </header>
 
         <?php if (isset($message)): ?>
-            <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <div class="alert alert-success">
                 <?= $message ?>
             </div>
         <?php endif; ?>
