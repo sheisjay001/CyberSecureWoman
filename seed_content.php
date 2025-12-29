@@ -20,6 +20,31 @@ foreach ($badges as $badge) {
 // Type: 'video', 'article', 'lab'
 $new_content = [
     [
+        'title' => 'Introduction to Cybersecurity',
+        'description' => 'Learn the fundamentals of cybersecurity, including the CIA triad, threat actors, and common attack vectors.',
+        'type' => 'video',
+        'content_body' => '
+            <h2>What is Cybersecurity?</h2>
+            <p>Cybersecurity is the practice of protecting systems, networks, and programs from digital attacks.</p>
+            <h3>The CIA Triad</h3>
+            <ul>
+                <li><strong>Confidentiality</strong></li>
+                <li><strong>Integrity</strong></li>
+                <li><strong>Availability</strong></li>
+            </ul>
+        ',
+        'content_url' => 'https://www.youtube.com/embed/nzZkKoREEGo', // Simplilearn
+        'thumbnail_url' => 'https://img.youtube.com/vi/nzZkKoREEGo/maxresdefault.jpg'
+    ],
+    [
+        'title' => 'Password Cracking Basics',
+        'description' => 'Understand how attackers crack passwords and how to secure them using hashing and salting.',
+        'type' => 'video',
+        'content_body' => 'In this lesson, we explore common password cracking techniques like Brute Force, Dictionary Attacks, and Rainbow Tables.',
+        'content_url' => 'https://www.youtube.com/embed/7U-RbOKanYs', // Computerphile
+        'thumbnail_url' => 'https://img.youtube.com/vi/7U-RbOKanYs/maxresdefault.jpg'
+    ],
+    [
         'title' => 'Linux for Hackers',
         'description' => 'Master the Linux command line, essential for any cybersecurity career.',
         'type' => 'video',
@@ -93,6 +118,7 @@ foreach ($new_content as $c) {
     } else {
         // Update existing record
         $id = $check->fetch_assoc()['id'];
+        echo "Updating ID: $id with URL: " . $c['content_url'] . "\n";
         $update = $conn->prepare("UPDATE courses SET description=?, type=?, content_body=?, content_url=?, thumbnail_url=? WHERE id=?");
         $update->bind_param("sssssi", $c['description'], $c['type'], $c['content_body'], $c['content_url'], $c['thumbnail_url'], $id);
         if ($update->execute()) {
