@@ -31,9 +31,32 @@
         document.addEventListener('DOMContentLoaded', function() {
             const toggle = document.getElementById('sidebar-toggle');
             const nav = document.getElementById('sidebar-nav');
+            
             if (toggle && nav) {
-                toggle.addEventListener('click', function() {
+                // Initial state check - ensure it's hidden on load for mobile
+                if (window.innerWidth <= 768) {
+                    nav.classList.remove('active');
+                }
+
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent event bubbling
                     nav.classList.toggle('active');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const isClickInside = nav.contains(event.target) || toggle.contains(event.target);
+                    if (!isClickInside && nav.classList.contains('active') && window.innerWidth <= 768) {
+                        nav.classList.remove('active');
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        nav.classList.remove('active');
+                        nav.style.display = ''; // Reset display property
+                    }
                 });
             }
         });
