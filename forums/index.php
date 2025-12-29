@@ -18,7 +18,8 @@ $result = $conn->query($sql);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forum - CyberSecure Women</title>
   <link rel="stylesheet" href="/assets/css/style.css">
-  <style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>  <style>
     .forum-list { width: 100%; border-collapse: collapse; margin-top: 1rem; }
     .forum-list th, .forum-list td { text-align: left; padding: 1rem; border-bottom: 1px solid #ddd; }
     .forum-list tr:hover { background-color: #f9f9f9; }
