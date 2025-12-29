@@ -23,3 +23,42 @@ input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #2b2f54;
 .alert-error{background:#301b1b;color:#ffd6d6;border:1px solid var(--error)}
 .alert-success{background:#1c2e23;color:#daf5e4;border:1px solid var(--success)}
 
+/* Mobile Responsive Tweaks */
+@media (max-width: 768px) {
+  .header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .header nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .header nav a {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #232647;
+    flex-grow: 1;
+    text-align: center;
+  }
+  .hero {
+    text-align: center;
+  }
+  .cta {
+    flex-direction: column;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+    padding: 12px;
+  }
+  .cards {
+    grid-template-columns: 1fr; /* Force single column on small screens */
+  }
+}
+
