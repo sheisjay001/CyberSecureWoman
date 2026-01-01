@@ -15,11 +15,11 @@ $stmt->execute();
 $user_stats = $stmt->get_result()->fetch_assoc();
 
 // Get Rank (simple count of users with more points)
-$stmt = $conn->prepare("SELECT COUNT(*) as rank FROM users WHERE points > ?");
+$stmt = $conn->prepare("SELECT COUNT(*) as rank_count FROM users WHERE points > ?");
 $stmt->bind_param("i", $user_stats['points']);
 $stmt->execute();
 $rank_data = $stmt->get_result()->fetch_assoc();
-$global_rank = $rank_data['rank'] + 1;
+$global_rank = $rank_data['rank_count'] + 1;
 
 // Get Courses Completed (Placeholder for now, assumes 0 if not tracked yet)
 $courses_completed = 0; 
