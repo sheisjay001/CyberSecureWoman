@@ -1,6 +1,8 @@
 :root{--primary:#9c27b0;--secondary:#ffffff;--bg:#0f1222;--text:#e9e9f0;--muted:#a7a7bd;--card:#181b2e;--error:#e45757;--success:#4caf50}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif;line-height:1.6}
+/* Improved Focus States for Accessibility */
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .container{max-width:1000px;margin:0 auto;padding:16px}
 .header{background:#12152a;border-bottom:1px solid #232647}
 .header h1{margin:0}

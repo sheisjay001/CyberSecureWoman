@@ -8,12 +8,20 @@ $conn = db();
 
 // Handle Reply
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_content'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die("Invalid CSRF token");
+    }
+    
     $content = trim($_POST['reply_content']);
     if (!empty($content)) {
         $stmt = $conn->prepare("INSERT INTO forum_posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())");
         $userId = $_SESSION['user_id'];
         $stmt->bind_param("iis", $id, $userId, $content);
         $stmt->execute();
+        
+        // Award Points for replying
+        add_points($userId, 5); // 5 points for a reply
+        
         // Refresh to show new post
         header("Location: /forums/view.php?id=$id");
         exit;
@@ -77,6 +85,7 @@ $posts = $stmt->get_result();
       <div class="reply-box">
           <h3>Post a Reply</h3>
           <form method="POST" action="">
+              <?= csrf_field() ?>
               <div class="form-group">
                   <textarea name="reply_content" rows="5" required placeholder="Type your reply here..." style="width: 100%; padding: 0.5rem;"></textarea>
               </div>

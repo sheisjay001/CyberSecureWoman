@@ -7,12 +7,15 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = trim($_POST['title'] ?? '');
-    $content = trim($_POST['content'] ?? '');
-
-    if (empty($title) || empty($content)) {
-        $error = 'Please fill in both title and content.';
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid CSRF token.";
     } else {
+        $title = trim($_POST['title'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+
+        if (empty($title) || empty($content)) {
+            $error = 'Please fill in both title and content.';
+        } else {
         $conn = db();
         // Start transaction
         $conn->begin_transaction();
@@ -28,6 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare("INSERT INTO forum_posts (thread_id, user_id, content, created_at) VALUES (?, ?, ?, NOW())");
             $stmt->bind_param("iis", $threadId, $userId, $content);
             $stmt->execute();
+            
+            // Award Points for creating a thread
+            add_points($userId, 10); // 10 points for a new thread
 
             $conn->commit();
             header("Location: /forums/view.php?id=$threadId");
@@ -35,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             $conn->rollback();
             $error = 'Failed to create thread. Please try again.';
+        }
         }
     }
 }
@@ -64,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <?php endif; ?>
 
           <form method="POST" action="">
+              <?= csrf_field() ?>
               <div class="form-group">
                   <label for="title">Topic Title</label>
                   <input type="text" id="title" name="title" required placeholder="e.g., How do I get started with CTFs?">

@@ -89,7 +89,64 @@ function authenticate($email, $password) {
   $_SESSION['user_id'] = (int) $user['id'];
   $_SESSION['user_name'] = $user['name'];
   $_SESSION['user_gender'] = $user['gender'];
+  
+  // Update streak
+  update_login_streak($user['id']);
+  
   return true;
+}
+
+function update_login_streak($user_id) {
+    $conn = db();
+    
+    // Get last active date
+    $stmt = $conn->prepare("SELECT last_active_at, current_streak FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    
+    if ($row = $res->fetch_assoc()) {
+        $last_active = $row['last_active_at'];
+        $streak = $row['current_streak'];
+        $today = date('Y-m-d');
+        
+        if ($last_active) {
+            $last_date = date('Y-m-d', strtotime($last_active));
+            $diff = (strtotime($today) - strtotime($last_date)) / (60 * 60 * 24);
+            
+            if ($diff == 1) {
+                // Consecutive day
+                $streak++;
+            } elseif ($diff > 1) {
+                // Missed a day (or more)
+                $streak = 1;
+            }
+            // If diff == 0, same day, do nothing to streak
+        } else {
+            // First time login
+            $streak = 1;
+        }
+        
+        // Update DB
+        $stmt = $conn->prepare("UPDATE users SET last_active_at = NOW(), current_streak = ? WHERE id = ?");
+        $stmt->bind_param("ii", $streak, $user_id);
+        $stmt->execute();
+    }
+}
+
+function add_points($user_id, $points) {
+    $conn = db();
+    $stmt = $conn->prepare("UPDATE users SET points = points + ? WHERE id = ?");
+    $stmt->bind_param("ii", $points, $user_id);
+    return $stmt->execute();
+}
+
+function get_leaderboard($limit = 5) {
+    $conn = db();
+    $stmt = $conn->prepare("SELECT name, points, current_streak FROM users ORDER BY points DESC, current_streak DESC LIMIT ?");
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    return $stmt->get_result();
 }
 
 function logout() {

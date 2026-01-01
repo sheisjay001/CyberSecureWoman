@@ -1,13 +1,13 @@
 <aside class="sidebar">
     <div class="sidebar-header">
         <h2>CyberSecure Women</h2>
-        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle navigation">
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar-nav">
             <span></span>
             <span></span>
             <span></span>
         </button>
     </div>
-    <nav class="sidebar-nav" id="sidebar-nav">
+    <nav class="sidebar-nav" id="sidebar-nav" aria-label="Main Navigation">
         <a href="/dashboard.php" class="<?= $_SERVER['REQUEST_URI'] === '/dashboard.php' || $_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '/index.php' ? 'active' : '' ?>">
             <i class="fas fa-home"></i> Dashboard
         </a>
@@ -33,9 +33,9 @@
         <?php
         if (isset($_SESSION['flash'])) {
             foreach ($_SESSION['flash'] as $key => $flash) {
-                echo '<div class="toast ' . sanitize($flash['type']) . '">
+                echo '<div class="toast ' . sanitize($flash['type']) . '" role="alert" aria-live="polite">
                         <span class="toast-message">' . sanitize($flash['message']) . '</span>
-                        <button class="toast-close">&times;</button>
+                        <button class="toast-close" aria-label="Close notification">&times;</button>
                       </div>';
                 unset($_SESSION['flash'][$key]);
             }

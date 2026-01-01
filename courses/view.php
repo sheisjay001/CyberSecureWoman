@@ -87,8 +87,18 @@ if (!$course) {
               </div>
           <?php endif; ?>
 
-          <div style="margin-top: 2rem;">
+          <div style="margin-top: 2rem; display: flex; gap: 10px;">
               <button class="btn" onclick="alert('Progress tracking coming soon!')">Mark as Complete</button>
+              
+              <?php
+              // Check if quiz exists
+              $q_check = $conn->prepare("SELECT id FROM quizzes WHERE course_id = ? LIMIT 1");
+              $q_check->bind_param("i", $id);
+              $q_check->execute();
+              if ($q_check->get_result()->num_rows > 0):
+              ?>
+                <a href="/courses/quiz.php?course_id=<?= $id ?>" class="btn-secondary" style="text-decoration: none; padding: 10px 20px; border-radius: 4px; background: var(--primary); color: white;">Take Quiz</a>
+              <?php endif; ?>
           </div>
       </article>
     </main>

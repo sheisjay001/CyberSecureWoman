@@ -3,6 +3,30 @@ session_start();
 require_once __DIR__ . '/includes/functions.php';
 require_login();
 $user_name = $_SESSION['user_name'] ?? 'Learner';
+
+// Fetch User Stats
+$conn = db();
+$user_id = $_SESSION['user_id'];
+
+// Get Points and Streak
+$stmt = $conn->prepare("SELECT points, current_streak FROM users WHERE id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_stats = $stmt->get_result()->fetch_assoc();
+
+// Get Rank (simple count of users with more points)
+$stmt = $conn->prepare("SELECT COUNT(*) as rank FROM users WHERE points > ?");
+$stmt->bind_param("i", $user_stats['points']);
+$stmt->execute();
+$rank_data = $stmt->get_result()->fetch_assoc();
+$global_rank = $rank_data['rank'] + 1;
+
+// Get Courses Completed (Placeholder for now, assumes 0 if not tracked yet)
+$courses_completed = 0; 
+
+// Get Leaderboard
+$leaderboard = get_leaderboard(5);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,22 +54,22 @@ $user_name = $_SESSION['user_name'] ?? 'Learner';
       <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px;">
         <div class="stat-card">
           <h3>Courses Completed</h3>
-          <div class="value">0</div>
+          <div class="value"><?= $courses_completed ?></div>
           <i class="fas fa-check-circle icon"></i>
         </div>
         <div class="stat-card">
-          <h3>Badges Earned</h3>
-          <div class="value">0</div>
+          <h3>Points Earned</h3>
+          <div class="value"><?= number_format($user_stats['points']) ?></div>
           <i class="fas fa-medal icon"></i>
         </div>
         <div class="stat-card">
           <h3>Current Streak</h3>
-          <div class="value">1 <span style="font-size: 1rem; color: var(--muted); font-weight: normal;">day</span></div>
+          <div class="value"><?= $user_stats['current_streak'] ?> <span style="font-size: 1rem; color: var(--muted); font-weight: normal;">day<?= $user_stats['current_streak'] == 1 ? '' : 's' ?></span></div>
           <i class="fas fa-fire icon"></i>
         </div>
         <div class="stat-card">
           <h3>Global Rank</h3>
-          <div class="value">#42</div>
+          <div class="value">#<?= $global_rank ?></div>
           <i class="fas fa-trophy icon"></i>
         </div>
       </section>
@@ -65,20 +89,21 @@ $user_name = $_SESSION['user_name'] ?? 'Learner';
           </section>
           
           <section class="card">
-            <h2 style="margin: 0 0 15px 0; font-size: 1.2rem;">Recommended for You</h2>
-            <div style="display: grid; gap: 15px;">
-              <div style="display: flex; gap: 15px; align-items: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
-                <div style="background: var(--primary); width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                  <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: white;"></i>
+            <h2 style="margin: 0 0 15px 0; font-size: 1.2rem;">Leaderboard</h2>
+            <div style="display: grid; gap: 10px;">
+              <?php 
+              $rank = 1;
+              while($row = $leaderboard->fetch_assoc()): 
+                $is_me = ($row['name'] === $user_name);
+              ?>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: <?= $is_me ? 'rgba(156, 39, 176, 0.2)' : 'rgba(255,255,255,0.03)' ?>; border-radius: 8px; border: <?= $is_me ? '1px solid var(--primary)' : 'none' ?>;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <span style="font-weight: bold; width: 20px; color: var(--muted);">#<?= $rank++ ?></span>
+                  <span><?= sanitize($row['name']) ?></span>
                 </div>
-                <div style="flex-grow: 1;">
-                  <h4 style="margin: 0 0 5px 0;">Introduction to Cyber Hygiene</h4>
-                  <div style="height: 4px; background: #2b2f54; border-radius: 2px; width: 100%;">
-                    <div style="width: 0%; height: 100%; background: var(--success); border-radius: 2px;"></div>
-                  </div>
-                </div>
-                <a href="/courses/view.php?id=1" class="btn" style="padding: 5px 10px; font-size: 0.8rem;">Start</a>
+                <div style="font-weight: bold; color: var(--success);"><?= number_format($row['points']) ?> pts</div>
               </div>
+              <?php endwhile; ?>
             </div>
           </section>
         </div>
