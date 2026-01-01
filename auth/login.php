@@ -7,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? '';
   if ($email === '' || $password === '') {
     $error = 'Email and password are required.';
+  } elseif (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+    $error = 'Invalid session. Please refresh and try again.';
   } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $error = 'Invalid email address.';
   } else {
@@ -43,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="alert alert-error"><?= sanitize($error) ?></div>
     <?php endif; ?>
     <form method="post" class="card">
+      <?= csrf_field() ?>
       <label>
         <span>Email</span>
         <input type="email" name="email" required>

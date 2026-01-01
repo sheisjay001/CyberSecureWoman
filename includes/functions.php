@@ -188,6 +188,38 @@ function reset_password($email, $new_password) {
     return false;
 }
 
+function generate_csrf_token() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function verify_csrf_token($token) {
+    if (empty($_SESSION['csrf_token']) || empty($token)) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+function csrf_field() {
+    $token = generate_csrf_token();
+    return '<input type="hidden" name="csrf_token" value="' . $token . '">';
+}
+
+function flash($key, $message = null, $type = 'success') {
+    if ($message) {
+        $_SESSION['flash'][$key] = ['message' => $message, 'type' => $type];
+    } else {
+        if (isset($_SESSION['flash'][$key])) {
+            $msg = $_SESSION['flash'][$key];
+            unset($_SESSION['flash'][$key]);
+            return $msg;
+        }
+    }
+    return null;
+}
+
 function get_user_badges($user_id) {
     $conn = db();
     $stmt = $conn->prepare("SELECT b.*, ub.awarded_at FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");

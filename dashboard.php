@@ -18,27 +18,89 @@ $user_name = $_SESSION['user_name'] ?? 'Learner';
   <div class="layout-wrapper">
     <?php include __DIR__ . '/includes/sidebar.php'; ?>
     <main class="main-content">
-      <header style="margin-bottom: 20px;">
-        <h1>Dashboard</h1>
+      <header style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 5px;">Welcome back, <?= sanitize($user_name) ?>!</h1>
+          <p style="color: var(--muted); margin: 0;">Here's what's happening with your learning journey.</p>
+        </div>
+        <a href="/courses/index.php" class="btn"><i class="fas fa-play"></i> Resume Learning</a>
       </header>
-      <section>
-        <h2>Welcome, <?= sanitize($user_name) ?></h2>
-        <p>Track progress, earn badges, and climb the leaderboard.</p>
+      
+      <!-- Stats Row -->
+      <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div class="stat-card">
+          <h3>Courses Completed</h3>
+          <div class="value">0</div>
+          <i class="fas fa-check-circle icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Badges Earned</h3>
+          <div class="value">0</div>
+          <i class="fas fa-medal icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Current Streak</h3>
+          <div class="value">1 <span style="font-size: 1rem; color: var(--muted); font-weight: normal;">day</span></div>
+          <i class="fas fa-fire icon"></i>
+        </div>
+        <div class="stat-card">
+          <h3>Global Rank</h3>
+          <div class="value">#42</div>
+          <i class="fas fa-trophy icon"></i>
+        </div>
       </section>
-      <section class="cards">
-        <div class="card">
-          <h3>Your Progress</h3>
-          <p>No progress yet.</p>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <!-- Left Column -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h2 style="margin: 0; font-size: 1.2rem;">Recent Activity</h2>
+              <a href="#" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">View All</a>
+            </div>
+            <div style="color: var(--muted); padding: 20px; text-align: center; border: 1px dashed #2b2f54; border-radius: 8px;">
+              <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+              No recent activity. Start a course to see it here!
+            </div>
+          </section>
+          
+          <section class="card">
+            <h2 style="margin: 0 0 15px 0; font-size: 1.2rem;">Recommended for You</h2>
+            <div style="display: grid; gap: 15px;">
+              <div style="display: flex; gap: 15px; align-items: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <div style="background: var(--primary); width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                  <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: white;"></i>
+                </div>
+                <div style="flex-grow: 1;">
+                  <h4 style="margin: 0 0 5px 0;">Introduction to Cyber Hygiene</h4>
+                  <div style="height: 4px; background: #2b2f54; border-radius: 2px; width: 100%;">
+                    <div style="width: 0%; height: 100%; background: var(--success); border-radius: 2px;"></div>
+                  </div>
+                </div>
+                <a href="/courses/view.php?id=1" class="btn" style="padding: 5px 10px; font-size: 0.8rem;">Start</a>
+              </div>
+            </div>
+          </section>
         </div>
-        <div class="card">
-          <h3>Badges</h3>
-          <p>No badges yet.</p>
+        
+        <!-- Right Column -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+           <section class="card">
+            <h2 style="margin: 0 0 15px 0; font-size: 1.2rem;">Community Spotlight</h2>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 15px;">Join the discussion in our forums.</p>
+            <a href="/forums/index.php" class="btn-secondary" style="width: 100%; text-align: center; display: block; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); color: var(--text);">
+              <i class="fas fa-comments"></i> Visit Forum
+            </a>
+          </section>
+          
+          <section class="card" style="background: linear-gradient(180deg, var(--card) 0%, rgba(156, 39, 176, 0.1) 100%);">
+            <h2 style="margin: 0 0 10px 0; font-size: 1.2rem;">Pro Tip</h2>
+            <p style="font-size: 0.9rem; line-height: 1.5; color: var(--muted);">
+              "Enable 2FA on all your accounts. It's the single most effective way to prevent unauthorized access."
+            </p>
+          </section>
         </div>
-        <div class="card">
-          <h3>Leaderboard</h3>
-          <p>Coming soon.</p>
-        </div>
-      </section>
+      </div>
     </main>
   </div>
 </body>

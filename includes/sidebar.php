@@ -27,6 +27,23 @@
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
     </nav>
+    
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <?php
+        if (isset($_SESSION['flash'])) {
+            foreach ($_SESSION['flash'] as $key => $flash) {
+                echo '<div class="toast ' . sanitize($flash['type']) . '">
+                        <span class="toast-message">' . sanitize($flash['message']) . '</span>
+                        <button class="toast-close">&times;</button>
+                      </div>';
+                unset($_SESSION['flash'][$key]);
+            }
+        }
+        ?>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggle = document.getElementById('sidebar-toggle');
